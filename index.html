@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Cluda in 60 seconds</title>
+<link rel="icon" href="logo.svg">
+<!-- Umami (open-source analytics). Replace UMAMI_WEBSITE_ID with the id from cloud.umami.is. -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="UMAMI_WEBSITE_ID" data-auto-track="true"></script>
+<style>
+  @font-face { font-family: Satoshi; src: url(fonts/Satoshi-Regular.otf); font-weight: 400; }
+  @font-face { font-family: Satoshi; src: url(fonts/Satoshi-Medium.otf); font-weight: 500; }
+  :root { --bg: #EDE9E4; --ink: #0E1210; --muted: #5b625e; --green: #3AAC74; --card: #F6F3EF; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: Satoshi, system-ui, sans-serif; font-weight: 400; -webkit-font-smoothing: antialiased; }
+  main { max-width: 980px; margin: 0 auto; padding: 40px 16px 64px; }
+  header img { height: 30px; }
+  h1 { font-weight: 500; font-size: clamp(28px, 4.5vw, 44px); line-height: 1.1; margin: 40px 0 12px; letter-spacing: -0.01em; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0 0 28px; max-width: 640px; line-height: 1.5; }
+  .video { border-radius: 14px; overflow: hidden; background: #000; box-shadow: 0 12px 40px rgba(14,18,16,.12); }
+  video { display: block; width: 100%; height: auto; }
+  .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0; }
+  .points div { background: var(--card); border-radius: 12px; padding: 18px; font-size: 15px; line-height: 1.45; color: var(--muted); }
+  .points span { display: block; color: var(--ink); font-weight: 500; font-size: 17px; margin-bottom: 6px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .cta a { text-decoration: none; font-weight: 500; font-size: 16px; padding: 13px 22px; border-radius: 999px; }
+  .primary { background: var(--ink); color: #fff; }
+  .secondary { border: 1px solid var(--ink); color: var(--ink); }
+  footer { margin-top: 48px; font-size: 13px; color: var(--muted); }
+  @media (max-width: 700px) { .points { grid-template-columns: 1fr; } main { padding-top: 24px; } h1 { margin-top: 28px; } }
+</style>
+</head>
+<body>
+<main>
+  <header><img src="logo.svg" alt="Cluda"></header>
+  <h1 id="title">Cluda in 60 seconds</h1>
+  <p class="lede">Comparing policy wordings at renewal takes a broker's team hours. Cluda does it in minutes - the same answer every time, with the page reference behind every line.</p>
+  <div class="video">
+    <video id="v" controls playsinline preload="metadata" poster="poster.jpg">
+      <source src="cluda-demo.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="points">
+    <div><span>Minutes, not hours</span>Wordings compared clause by clause across insurers, ready to export.</div>
+    <div><span>Built to stand up</span>Same answer every time, each line traced to the page it came from.</div>
+    <div><span>amii rollout</span>Rolling out to all 106 amii member firms, including 5 of the top 10 UK brokers.</div>
+  </div>
+  <div class="cta">
+    <a class="primary" id="reply" href="mailto:mick@cluda.ai?subject=Cluda">Reply to Mick</a>
+    <a class="secondary" id="book" href="https://calendly.com/mick-cluda/30min" target="_blank" rel="noopener">Book a call</a>
+  </div>
+  <footer>Mick McGurn, CEO, Cluda · mick@cluda.ai</footer>
+</main>
+<script>
+  // Each person gets their own link: ?p=firstname-lastname. Events carry it so Umami shows who watched.
+  var p = (new URLSearchParams(location.search).get('p') || 'direct').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 60);
+  var first = p !== 'direct' ? p.split('-')[0] : '';
+  if (first) document.getElementById('title').textContent = 'Hi ' + first.charAt(0).toUpperCase() + first.slice(1) + ' - here’s Cluda in 60 seconds';
+  function track(name, extra) {
+    try { if (window.umami) umami.track(name, Object.assign({ p: p }, extra || {})); } catch (e) {}
+  }
+  window.addEventListener('load', function () { setTimeout(function () { track('page-open'); }, 800); });
+  var v = document.getElementById('v'), marks = {25: 0, 50: 0, 90: 0}, started = false;
+  v.addEventListener('play', function () { if (!started) { started = true; track('video-play'); } });
+  v.addEventListener('timeupdate', function () {
+    if (!v.duration) return;
+    var pct = v.currentTime / v.duration * 100;
+    [25, 50, 90].forEach(function (m) { if (pct >= m && !marks[m]) { marks[m] = 1; track('video-' + m); } });
+  });
+  document.getElementById('reply').addEventListener('click', function () { track('click-reply'); });
+  document.getElementById('book').addEventListener('click', function () { track('click-book'); });
+</script>
+</body>
+</html>
